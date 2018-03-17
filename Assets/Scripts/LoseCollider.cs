@@ -3,10 +3,14 @@ using System.Collections;
 
 public class LoseCollider : MonoBehaviour {
 
-	public LevelManager levelManager;
+	private LevelManager levelManager;
+
+	private void Start() {
+		levelManager = GameObject.FindObjectOfType<LevelManager>();
+	}
 
 	private void OnTriggerEnter2D(Collider2D collision) {
 		print("Trigger");
-		levelManager.LoadLevel("Win");
+		levelManager.LoadLevel("Lose");
 	}
 }
