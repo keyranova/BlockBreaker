@@ -3,13 +3,22 @@ using System.Collections;
 
 public class Brick : MonoBehaviour {
 
-	public int maxHits;
+	public AudioClip crack;
+	public Sprite[] hitSprites;
+	public static int breakableCount = 0;
 
 	private int timesHit;
 	private LevelManager levelManager;
+	private bool isBreakable;
 
 	// Use this for initialization
 	void Start () {
+		isBreakable = (tag == "Breakable");
+		// keep track of breakable bricks
+		if (isBreakable) {
+			breakableCount++;
+		}
+
 		levelManager = GameObject.FindObjectOfType<LevelManager>();
 		timesHit = 0;
 	}
@@ -20,12 +29,31 @@ public class Brick : MonoBehaviour {
 	}
 
 	private void OnCollisionEnter2D(Collision2D collision) {
-		timesHit++;
-		SimulateWin();
+		AudioSource.PlayClipAtPoint(crack, transform.position, 1.5f);
+
+		if (isBreakable) {
+			HandleHits();
+		}
 	}
 
-	// TODO remove this method once we can actually win
-	void SimulateWin() {
-		levelManager.LoadNextLevel();
+	void HandleHits() {
+		timesHit++;
+		int maxHits = hitSprites.Length + 1;
+
+		if (timesHit >= maxHits) {
+			breakableCount--;
+			levelManager.BrickDestroyed();
+			Destroy(gameObject);
+		} else {
+			LoadSprites();
+		}
+	}
+
+	void LoadSprites() {
+		int spriteIndex = timesHit - 1;
+
+		if (hitSprites[spriteIndex]) {
+			GetComponent<SpriteRenderer>().sprite = hitSprites[spriteIndex];
+		}
 	}
 }

@@ -21,12 +21,22 @@ public class Ball : MonoBehaviour {
 
 			// Wait for a mouse press to launch
 			if (Input.GetMouseButtonDown(0)) {
-				print("mouse clicked, launch ball");
 				hasStarted = true;
 
 				Rigidbody2D rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
 				rigidbody2D.velocity = new Vector2(2f, 10f);
 			}
+		}
+	}
+
+	private void OnCollisionEnter2D(Collision2D collision) {
+		Vector2 tweak = new Vector2(Random.Range(0f, 0.2f), Random.Range(0f, 0.2f));
+
+		if (hasStarted) {
+			GetComponent<AudioSource>().Play();
+
+			Rigidbody2D rigidbody2D = gameObject.GetComponent<Rigidbody2D>();
+			rigidbody2D.velocity += tweak;
 		}
 	}
 }
